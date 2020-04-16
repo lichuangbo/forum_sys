@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SLogMapper">
+    
+    <resultMap type="SLog" id="SLogResult">
+        <result property="id"    column="id"    />
+        <result property="loginName"    column="login_name"    />
+        <result property="ipaddr"    column="ipaddr"    />
+        <result property="browser"    column="browser"    />
+        <result property="os"    column="os"    />
+        <result property="loginTime"    column="login_time"    />
+    </resultMap>
+
+    <sql id="selectSLogVo">
+        select id, login_name, ipaddr, browser, os, login_time from s_log
+    </sql>
+
+    <select id="selectSLogList" parameterType="SLog" resultMap="SLogResult">
+        <include refid="selectSLogVo"/>
+        <where>  
+            <if test="loginName != null  and loginName != ''"> and login_name like concat('%', #{loginName}, '%')</if>
+            <if test="ipaddr != null  and ipaddr != ''"> and ipaddr = #{ipaddr}</if>
+            <if test="browser != null  and browser != ''"> and browser = #{browser}</if>
+            <if test="os != null  and os != ''"> and os = #{os}</if>
+            <if test="loginTime != null "> and login_time = #{loginTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSLogById" parameterType="Long" resultMap="SLogResult">
+        <include refid="selectSLogVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSLog" parameterType="SLog" useGeneratedKeys="true" keyProperty="id">
+        insert into s_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="loginName != null  and loginName != ''">login_name,</if>
+            <if test="ipaddr != null  and ipaddr != ''">ipaddr,</if>
+            <if test="browser != null  and browser != ''">browser,</if>
+            <if test="os != null  and os != ''">os,</if>
+            <if test="loginTime != null ">login_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="loginName != null  and loginName != ''">#{loginName},</if>
+            <if test="ipaddr != null  and ipaddr != ''">#{ipaddr},</if>
+            <if test="browser != null  and browser != ''">#{browser},</if>
+            <if test="os != null  and os != ''">#{os},</if>
+            <if test="loginTime != null ">#{loginTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSLog" parameterType="SLog">
+        update s_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="loginName != null  and loginName != ''">login_name = #{loginName},</if>
+            <if test="ipaddr != null  and ipaddr != ''">ipaddr = #{ipaddr},</if>
+            <if test="browser != null  and browser != ''">browser = #{browser},</if>
+            <if test="os != null  and os != ''">os = #{os},</if>
+            <if test="loginTime != null ">login_time = #{loginTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSLogById" parameterType="Long">
+        delete from s_log where id = #{id}
+    </delete>
+
+    <delete id="deleteSLogByIds" parameterType="String">
+        delete from s_log where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
